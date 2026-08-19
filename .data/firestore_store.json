@@ -1,0 +1,202 @@
+{
+  "users": {
+    "vqgL4wfbDdgP5mTZ3fKGpgP6bqJ3": {
+      "uid": "vqgL4wfbDdgP5mTZ3fKGpgP6bqJ3",
+      "displayName": "Arpan Santosh Aakhare",
+      "email": "arpansantoshaakhare@gmail.com",
+      "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocJ3z-Mi73qgE1EQKtq0bjh57aiZrNkUZiVjdz03EHaR2pYI0A=s96-c",
+      "authProvider": "google.com",
+      "emailVerified": true,
+      "createdAt": "2026-08-19T16:54:26.123Z",
+      "lastLoginAt": "2026-08-19T17:51:23.136Z",
+      "updatedAt": "2026-08-19T17:51:23.139Z",
+      "id": "vqgL4wfbDdgP5mTZ3fKGpgP6bqJ3"
+    },
+    "mySEuZLHmmOiSoSYoe8S99VwLP02": {
+      "uid": "mySEuZLHmmOiSoSYoe8S99VwLP02",
+      "displayName": "Arpan Aakhare",
+      "email": "asaakhare_cs@jspmrscoe.edu.in",
+      "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocJ-rjDW1K4K8N10hiRl7NUu7bG-ZSCddCtRaeJkg_iu8oHv7g=s96-c",
+      "authProvider": "google.com",
+      "emailVerified": true,
+      "createdAt": "2026-08-19T17:20:08.468Z",
+      "lastLoginAt": "2026-08-19T17:20:08.468Z",
+      "updatedAt": "2026-08-19T17:20:08.471Z",
+      "id": "mySEuZLHmmOiSoSYoe8S99VwLP02"
+    }
+  },
+  "query_results": {
+    "run_1787159880329_n6pfh": {
+      "runId": "run_1787159880329_n6pfh",
+      "queryId": "qry_1787159880329",
+      "question": "What is the refund period and what exceptions apply to enterprise customWhat is the rate limit for authenticated API requests and how do we handle 429 errors?ers?",
+      "complexity": "Complex",
+      "originalTokenCount": 381,
+      "initialBudget": 229,
+      "finalTokenCount": 305,
+      "evidenceCoverage": 0.99,
+      "qualityScore": 0.99,
+      "qualityFloor": 0.9,
+      "groundTruthAgreement": "N/A — ground truth unavailable",
+      "relaxationUsed": false,
+      "optimizerLatencyMs": 2,
+      "llmLatencyMs": 0,
+      "totalLatencyMs": 2,
+      "llmCost": 0.000221,
+      "optimizerCost": 0.00005,
+      "totalCost": 0.000271,
+      "costPerCorrectAnswer": "N/A — correctness unavailable",
+      "retainedEvidence": [
+        {
+          "id": "chk_1",
+          "text": "Document 1: Standard customer refund policy permits returns within 30 days of purchase. Refunds must be submitted via customer portal.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.",
+          "score": 0.6,
+          "rationale": "Provides supporting context detail."
+        }
+      ],
+      "removedEvidence": [
+        {
+          "id": "chk_2",
+          "text": "Document 2: For enterprise customers, refund conditions are governed by Master Services Agreement section 4.2. Enterprise clients receive a 60-day refund exception window upon written notice to executive management.",
+          "score": 0.48,
+          "rationale": "Pruned to meet target context budget (229 tokens)."
+        },
+        {
+          "id": "chk_3",
+          "text": "Document 3: All standard items are subject to a 5% restocking fee unless defective.",
+          "score": 0.4,
+          "rationale": "Pruned to meet target context budget (229 tokens)."
+        }
+      ],
+      "relaxationEvents": [],
+      "finalAnswer": "[Optimization Engine Only] (GEMINI_API_KEY unconfigured). Synthesized context evidence (1 chunks retained):\n\n• Document 1: Standard customer refund policy permits returns within 30 days of purchase. Refunds must be submitted via customer portal.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.",
+      "executionMode": "Optimization Engine Only",
+      "createdAt": "2026-08-19T17:18:00.329Z",
+      "ownerUid": "vqgL4wfbDdgP5mTZ3fKGpgP6bqJ3",
+      "id": "run_1787159880329_n6pfh",
+      "updatedAt": "2026-08-19T17:18:00.329Z"
+    },
+    "run_1787159918091_6gqw3": {
+      "runId": "run_1787159918091_6gqw3",
+      "queryId": "qry_1787159918091",
+      "question": "What is the refund period and what exceptions apply to enterprise customWhat is the rate limit for authenticated API requests and how do we handle 429 errors?ers?",
+      "complexity": "Complex",
+      "originalTokenCount": 381,
+      "initialBudget": 229,
+      "finalTokenCount": 381,
+      "evidenceCoverage": 0.99,
+      "qualityScore": 0.99,
+      "qualityFloor": 1,
+      "groundTruthAgreement": "N/A — ground truth unavailable",
+      "relaxationUsed": true,
+      "optimizerLatencyMs": 1,
+      "llmLatencyMs": 0,
+      "totalLatencyMs": 1,
+      "llmCost": 0.000278,
+      "optimizerCost": 0.00005,
+      "totalCost": 0.000328,
+      "costPerCorrectAnswer": "N/A — correctness unavailable",
+      "retainedEvidence": [
+        {
+          "id": "chk_1",
+          "text": "Document 1: Standard customer refund policy permits returns within 30 days of purchase. Refunds must be submitted via customer portal.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.",
+          "score": 0.6,
+          "rationale": "Provides supporting context detail."
+        },
+        {
+          "id": "chk_2",
+          "text": "Document 2: For enterprise customers, refund conditions are governed by Master Services Agreement section 4.2. Enterprise clients receive a 60-day refund exception window upon written notice to executive management.",
+          "score": 0.48,
+          "rationale": "Low relevance score relative to query intent."
+        },
+        {
+          "id": "chk_3",
+          "text": "Document 3: All standard items are subject to a 5% restocking fee unless defective.",
+          "score": 0.4,
+          "rationale": "Low relevance score relative to query intent."
+        }
+      ],
+      "removedEvidence": [],
+      "relaxationEvents": [
+        {
+          "iteration": 1,
+          "previousBudget": 229,
+          "newBudget": 333,
+          "qualityBefore": 0.99,
+          "qualityAfter": 0.99,
+          "restoredEvidence": [
+            "chk_2"
+          ],
+          "reason": "Quality score 0.99 below quality floor 1. Restored evidence chunk chk_2."
+        },
+        {
+          "iteration": 2,
+          "previousBudget": 333,
+          "newBudget": 404,
+          "qualityBefore": 0.99,
+          "qualityAfter": 0.99,
+          "restoredEvidence": [
+            "chk_3"
+          ],
+          "reason": "Quality score 0.99 below quality floor 1. Restored evidence chunk chk_3."
+        }
+      ],
+      "finalAnswer": "[Optimization Engine Only] (GEMINI_API_KEY unconfigured). Synthesized context evidence (3 chunks retained):\n\n• Document 1: Standard customer refund policy permits returns within 30 days of purchase. Refunds must be submitted via customer portal.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.\n• Document 2: For enterprise customers, refund conditions are governed by Master Services Agreement section 4.2. Enterprise clients receive a 60-day refund exception window upon written notice to executive management.\n• Document 3: All standard items are subject to a 5% restocking fee unless defective.",
+      "executionMode": "Optimization Engine Only",
+      "createdAt": "2026-08-19T17:18:38.091Z",
+      "ownerUid": "vqgL4wfbDdgP5mTZ3fKGpgP6bqJ3",
+      "id": "run_1787159918091_6gqw3",
+      "updatedAt": "2026-08-19T17:18:38.091Z"
+    },
+    "run_1787159923808_u4ue1": {
+      "runId": "run_1787159923808_u4ue1",
+      "queryId": "qry_1787159923808",
+      "question": "What is the refund period and what exceptions apply to enterprise customWhat is the rate limit for authenticated API requests and how do we handle 429 errors?ers?",
+      "complexity": "Complex",
+      "originalTokenCount": 381,
+      "initialBudget": 229,
+      "finalTokenCount": 305,
+      "evidenceCoverage": 0.99,
+      "qualityScore": 0.99,
+      "qualityFloor": 0.55,
+      "groundTruthAgreement": "N/A — ground truth unavailable",
+      "relaxationUsed": false,
+      "optimizerLatencyMs": 0,
+      "llmLatencyMs": 0,
+      "totalLatencyMs": 0,
+      "llmCost": 0.000221,
+      "optimizerCost": 0.00005,
+      "totalCost": 0.000271,
+      "costPerCorrectAnswer": "N/A — correctness unavailable",
+      "retainedEvidence": [
+        {
+          "id": "chk_1",
+          "text": "Document 1: Standard customer refund policy permits returns within 30 days of purchase. Refunds must be submitted via customer portal.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.",
+          "score": 0.6,
+          "rationale": "Provides supporting context detail."
+        }
+      ],
+      "removedEvidence": [
+        {
+          "id": "chk_2",
+          "text": "Document 2: For enterprise customers, refund conditions are governed by Master Services Agreement section 4.2. Enterprise clients receive a 60-day refund exception window upon written notice to executive management.",
+          "score": 0.48,
+          "rationale": "Pruned to meet target context budget (229 tokens)."
+        },
+        {
+          "id": "chk_3",
+          "text": "Document 3: All standard items are subject to a 5% restocking fee unless defective.",
+          "score": 0.4,
+          "rationale": "Pruned to meet target context budget (229 tokens)."
+        }
+      ],
+      "relaxationEvents": [],
+      "finalAnswer": "[Optimization Engine Only] (GEMINI_API_KEY unconfigured). Synthesized context evidence (1 chunks retained):\n\n• Document 1: Standard customer refund policy permits returns within 30 days of purchase. Refunds must be submitted via customer portal.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.Retrieved Context Documents:\nDocument 1: Authenticated API requests are limited to 1,200 requests per minute per organization token. Free-tier accounts are restricted to 60 RPM.\nDocument 2: When rate limits are exceeded, the API returns an HTTP 429 Too Many Requests response code along with a Retry-After header indicating wait time in seconds.\nDocument 3: Clients should implement exponential backoff with jitter when encountering transient 5xx server errors.",
+      "executionMode": "Optimization Engine Only",
+      "createdAt": "2026-08-19T17:18:43.808Z",
+      "ownerUid": "vqgL4wfbDdgP5mTZ3fKGpgP6bqJ3",
+      "id": "run_1787159923808_u4ue1",
+      "updatedAt": "2026-08-19T17:18:43.808Z"
+    }
+  }
+}
