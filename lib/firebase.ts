@@ -81,16 +81,14 @@ export async function signInWithGoogle(): Promise<User> {
   } catch (error: any) {
     console.error("Firebase Google Auth Error:", error);
 
-    if (error.code === "auth/popup-blocked") {
-      console.warn("Popup blocked. Attempting redirect fallback...");
+    // Fallback to redirect authentication if popup is blocked or domain mismatch occurs
+    if (error.code === "auth/popup-blocked" || error.code === "auth/unauthorized-domain") {
+      console.warn("Attempting redirect authentication via Authorized Auth Domain...");
       await signInWithRedirect(auth, googleProvider);
       throw new Error("Redirecting to Google for authentication...");
     }
     if (error.code === "auth/popup-closed-by-user") {
       throw new Error("Google sign-in was cancelled.");
-    }
-    if (error.code === "auth/unauthorized-domain") {
-      throw new Error("Google sign-in is not configured for this domain in Firebase Console.");
     }
     if (error.code === "auth/network-request-failed") {
       throw new Error("Network request failed. Please check your internet connection.");
