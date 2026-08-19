@@ -32,7 +32,7 @@ export const adminAuth = admin.apps.length ? admin.auth() : null;
 // Determine if live Admin Firestore is available
 let firestoreDb: admin.firestore.Firestore | null = null;
 try {
-  if (admin.apps.length && (config.firebaseAdmin.clientEmail || process.env.NODE_ENV === "production" || process.env.VERCEL)) {
+  if (admin.apps.length && (config.firebaseAdmin.clientEmail || process.env.NODE_ENV === "production")) {
     firestoreDb = admin.firestore();
   }
 } catch (e) {
@@ -55,7 +55,7 @@ function saveStoreData(data: Record<string, Record<string, any>>) {
 /**
  * Generic Firestore collection query and mutation helper
  * Scopes queries by ownerUid or workspaceId
- * STRICT VERCEL PRODUCTION RULE: Uses Firestore Admin directly. Zero .data filesystem operations.
+ * PRODUCTION RULE: Uses Firestore Admin directly. Zero filesystem operations.
  */
 export async function getCollectionDocs<T = any>(
   collectionName: string,
@@ -77,8 +77,8 @@ export async function getCollectionDocs<T = any>(
       return results as T[];
     } catch (err: any) {
       console.warn(`Firestore read notice for ${collectionName}:`, err?.message || err);
-      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
-        throw new Error(`Firestore read error on Vercel production: ${err.message || "Connection failed"}`);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore read error on production: ${err.message || "Connection failed"}`);
       }
     }
   }
@@ -105,8 +105,8 @@ export async function getDocById<T = any>(collectionName: string, docId: string)
       }
     } catch (err: any) {
       console.warn(`Firestore doc get notice for ${collectionName}/${docId}:`, err?.message || err);
-      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
-        throw new Error(`Firestore doc get error on Vercel production: ${err.message || "Connection failed"}`);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore doc get error on production: ${err.message || "Connection failed"}`);
       }
     }
   }
@@ -131,8 +131,8 @@ export async function setDoc(collectionName: string, docId: string, data: any): 
       return;
     } catch (err: any) {
       console.warn(`Firestore write notice for ${collectionName}/${docId}:`, err?.message || err);
-      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
-        throw new Error(`Firestore write error on Vercel production: ${err.message || "Connection failed"}`);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore write error on production: ${err.message || "Connection failed"}`);
       }
     }
   }
@@ -156,8 +156,8 @@ export async function deleteDoc(collectionName: string, docId: string): Promise<
       return true;
     } catch (err: any) {
       console.warn(`Firestore delete notice for ${collectionName}/${docId}:`, err?.message || err);
-      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
-        throw new Error(`Firestore delete error on Vercel production: ${err.message || "Connection failed"}`);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore delete error on production: ${err.message || "Connection failed"}`);
       }
     }
   }
