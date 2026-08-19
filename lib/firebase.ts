@@ -69,7 +69,7 @@ export async function syncSessionToken(user: User, providerId: string = "google.
   return idToken;
 }
 
-export async function signInWithGoogle(): Promise<User> {
+export async function signInWithGoogle(): Promise<User | null> {
   if (!isFirebaseConfigured()) {
     throw new Error("Firebase Authentication Configuration Missing: Please verify environment variables.");
   }
@@ -81,14 +81,25 @@ export async function signInWithGoogle(): Promise<User> {
   } catch (error: any) {
     console.error("Firebase Google Auth Error:", error);
 
-    // Fallback to redirect authentication if popup is blocked or domain mismatch occurs
-    if (error.code === "auth/popup-blocked" || error.code === "auth/unauthorized-domain") {
-      console.warn("Attempting redirect authentication via Authorized Auth Domain...");
+    // If popup is blocked, attempt redirect fallback seamlessly
+    if (error.code === "auth/popup-blocked") {
+      console.warn("Popup blocked. Redirecting via Firebase Auth handler...");
       await signInWithRedirect(auth, googleProvider);
-      throw new Error("Redirecting to Google for authentication...");
+      return null;
     }
     if (error.code === "auth/popup-closed-by-user") {
-      throw new Error("Google sign-in was cancelled.");
+      throw new Error("Google sign-in popup was closed before completing.");
+    }
+    if (error.code === "auth/unauthorized-domain") {
+      const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
+      throw new Error(
+        `Firebase rejected domain '${host}'. Ensure Google Provider is enabled in Firebase Console (Authentication > Sign-in method) and '${host}' & '127.0.0.1' are listed under Authorized domains.`
+      );
+    }
+    if (error.code === "auth/operation-not-allowed") {
+      throw new Error(
+        "Google Sign-In is disabled in your Firebase project. Please enable 'Google' under Firebase Console > Authentication > Sign-in method."
+      );
     }
     if (error.code === "auth/network-request-failed") {
       throw new Error("Network request failed. Please check your internet connection.");

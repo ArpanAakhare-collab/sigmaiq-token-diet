@@ -45,11 +45,13 @@ export default function LoginPage() {
     setAuthError(null);
     setGoogleLoading(true);
     try {
-      await signInWithGoogle();
-      router.replace("/app");
+      const user = await signInWithGoogle();
+      if (user) {
+        router.replace("/app");
+      }
     } catch (err: any) {
       console.error("Google Authentication Error:", err);
-      setAuthError(err.message || "Google sign-in was cancelled.");
+      setAuthError(err.message || "Google sign-in failed.");
     } finally {
       setGoogleLoading(false);
     }
