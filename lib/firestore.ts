@@ -2,6 +2,7 @@ import * as admin from "firebase-admin";
 import { config } from "@/lib/config";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
 // Initialize Firebase Admin if needed
 if (!admin.apps.length) {
@@ -41,32 +42,53 @@ try {
   firestoreDb = null;
 }
 
-// Persistent Storage Fallback directory for local environment durability
-const DATA_DIR = path.join(process.cwd(), ".data");
+// Determine safe storage directory (os.tmpdir() for Serverless / Vercel compatibility)
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === "production");
+const baseDir = isServerless ? os.tmpdir() : process.cwd();
+const DATA_DIR = path.join(baseDir, ".data");
 const STORE_FILE = path.join(DATA_DIR, "firestore_store.json");
 
-function ensureStoreFile() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(STORE_FILE)) {
-    fs.writeFileSync(STORE_FILE, JSON.stringify({}), "utf8");
+// In-Memory fallback store when filesystem is read-only
+let memoryStore: Record<string, Record<string, any>> = (globalThis as any)._sigmaMemoryStore || {};
+(globalThis as any)._sigmaMemoryStore = memoryStore;
+
+function ensureStoreFile(): boolean {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(STORE_FILE)) {
+      fs.writeFileSync(STORE_FILE, JSON.stringify({}), "utf8");
+    }
+    return true;
+  } catch (err) {
+    console.warn("Storage filesystem notice (using memory fallback):", err);
+    return false;
   }
 }
 
 function getStoreData(): Record<string, Record<string, any>> {
-  ensureStoreFile();
-  try {
-    const content = fs.readFileSync(STORE_FILE, "utf8");
-    return JSON.parse(content || "{}");
-  } catch {
-    return {};
+  if (ensureStoreFile()) {
+    try {
+      const content = fs.readFileSync(STORE_FILE, "utf8");
+      return JSON.parse(content || "{}");
+    } catch {
+      // Fallback to memory
+    }
   }
+  return memoryStore;
 }
 
 function saveStoreData(data: Record<string, Record<string, any>>) {
-  ensureStoreFile();
-  fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), "utf8");
+  memoryStore = data;
+  (globalThis as any)._sigmaMemoryStore = memoryStore;
+  if (ensureStoreFile()) {
+    try {
+      fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), "utf8");
+    } catch (err) {
+      console.warn("Write to store file warning:", err);
+    }
+  }
 }
 
 /**
