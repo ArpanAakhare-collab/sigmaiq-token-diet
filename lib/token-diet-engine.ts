@@ -45,8 +45,8 @@ export interface TokenDietResult {
   finalAnswer: string;
   executionMode: "Gemini 1.5 Flash" | "Optimization Engine Only";
   createdAt: string;
-  ownerUid?: string;
-  projectId?: string;
+  ownerUid?: string | null;
+  projectId?: string | null;
 }
 
 function estimateTokens(text: string): number {
@@ -316,7 +316,7 @@ export async function runTokenDietOptimizer(params: {
     finalAnswer,
     executionMode,
     createdAt: new Date().toISOString(),
-    ownerUid: params.ownerUid,
-    projectId: params.projectId,
+    ownerUid: params.ownerUid || null,
+    projectId: params.projectId || null,
   };
 }

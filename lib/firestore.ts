@@ -34,6 +34,8 @@ let firestoreDb: admin.firestore.Firestore | null = null;
 try {
   if (admin.apps.length && (config.firebaseAdmin.clientEmail || process.env.NODE_ENV === "production")) {
     firestoreDb = admin.firestore();
+    // Enable ignoring undefined properties globally to prevent document write errors
+    firestoreDb.settings({ ignoreUndefinedProperties: true });
   }
 } catch (e) {
   firestoreDb = null;
@@ -53,9 +55,24 @@ function saveStoreData(data: Record<string, Record<string, any>>) {
 }
 
 /**
+ * Strips undefined properties recursively from document payloads before Firestore writes
+ */
+function sanitizeFirestorePayload(obj: any): any {
+  if (obj === null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(sanitizeFirestorePayload);
+
+  const clean: Record<string, any> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val !== undefined) {
+      clean[key] = sanitizeFirestorePayload(val);
+    }
+  }
+  return clean;
+}
+
+/**
  * Generic Firestore collection query and mutation helper
  * Scopes queries by ownerUid or workspaceId
- * PRODUCTION RULE: Uses Firestore Admin directly. Zero filesystem operations.
  */
 export async function getCollectionDocs<T = any>(
   collectionName: string,
@@ -125,9 +142,11 @@ export async function setDoc(collectionName: string, docId: string, data: any): 
     createdAt: data.createdAt || timestamp,
   };
 
+  const cleanPayload = sanitizeFirestorePayload(payload);
+
   if (firestoreDb) {
     try {
-      await firestoreDb.collection(collectionName).doc(docId).set(payload, { merge: true });
+      await firestoreDb.collection(collectionName).doc(docId).set(cleanPayload, { merge: true });
       return;
     } catch (err: any) {
       console.warn(`Firestore write notice for ${collectionName}/${docId}:`, err?.message || err);
@@ -144,7 +163,7 @@ export async function setDoc(collectionName: string, docId: string, data: any): 
   }
   store[collectionName][docId] = {
     ...(store[collectionName][docId] || {}),
-    ...payload,
+    ...cleanPayload,
   };
   saveStoreData(store);
 }
