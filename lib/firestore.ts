@@ -1,8 +1,5 @@
 import * as admin from "firebase-admin";
 import { config } from "@/lib/config";
-import fs from "fs";
-import path from "path";
-import os from "os";
 
 // Initialize Firebase Admin if needed
 if (!admin.apps.length) {
@@ -22,7 +19,7 @@ if (!admin.apps.length) {
       });
     } else {
       admin.initializeApp({
-        projectId: config.firebaseAdmin.projectId || "sigmaiq-dev",
+        projectId: config.firebaseAdmin.projectId || "sigmaiq-a6fd6",
       });
     }
   } catch (err) {
@@ -35,65 +32,30 @@ export const adminAuth = admin.apps.length ? admin.auth() : null;
 // Determine if live Admin Firestore is available
 let firestoreDb: admin.firestore.Firestore | null = null;
 try {
-  if (admin.apps.length && config.firebaseAdmin.clientEmail) {
+  if (admin.apps.length && (config.firebaseAdmin.clientEmail || process.env.NODE_ENV === "production" || process.env.VERCEL)) {
     firestoreDb = admin.firestore();
   }
 } catch (e) {
   firestoreDb = null;
 }
 
-// Determine safe storage directory (os.tmpdir() for Serverless / Vercel compatibility)
-const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === "production");
-const baseDir = isServerless ? os.tmpdir() : process.cwd();
-const DATA_DIR = path.join(baseDir, ".data");
-const STORE_FILE = path.join(DATA_DIR, "firestore_store.json");
-
-// In-Memory fallback store when filesystem is read-only
+// In-Memory store for non-production local dev fallback ONLY (Zero filesystem touches)
 let memoryStore: Record<string, Record<string, any>> = (globalThis as any)._sigmaMemoryStore || {};
 (globalThis as any)._sigmaMemoryStore = memoryStore;
 
-function ensureStoreFile(): boolean {
-  try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-    if (!fs.existsSync(STORE_FILE)) {
-      fs.writeFileSync(STORE_FILE, JSON.stringify({}), "utf8");
-    }
-    return true;
-  } catch (err) {
-    console.warn("Storage filesystem notice (using memory fallback):", err);
-    return false;
-  }
-}
-
 function getStoreData(): Record<string, Record<string, any>> {
-  if (ensureStoreFile()) {
-    try {
-      const content = fs.readFileSync(STORE_FILE, "utf8");
-      return JSON.parse(content || "{}");
-    } catch {
-      // Fallback to memory
-    }
-  }
   return memoryStore;
 }
 
 function saveStoreData(data: Record<string, Record<string, any>>) {
   memoryStore = data;
   (globalThis as any)._sigmaMemoryStore = memoryStore;
-  if (ensureStoreFile()) {
-    try {
-      fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), "utf8");
-    } catch (err) {
-      console.warn("Write to store file warning:", err);
-    }
-  }
 }
 
 /**
  * Generic Firestore collection query and mutation helper
  * Scopes queries by ownerUid or workspaceId
+ * STRICT VERCEL PRODUCTION RULE: Uses Firestore Admin directly. Zero .data filesystem operations.
  */
 export async function getCollectionDocs<T = any>(
   collectionName: string,
@@ -113,12 +75,15 @@ export async function getCollectionDocs<T = any>(
       });
       if (filterFn) return results.filter(filterFn);
       return results as T[];
-    } catch (err) {
-      console.warn(`Firestore read warning for ${collectionName}, using store:`, err);
+    } catch (err: any) {
+      console.warn(`Firestore read notice for ${collectionName}:`, err?.message || err);
+      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore read error on Vercel production: ${err.message || "Connection failed"}`);
+      }
     }
   }
 
-  // Local persistent Firestore store
+  // Local non-production development in-memory fallback
   const store = getStoreData();
   const collection = store[collectionName] || {};
   let items = Object.values(collection);
@@ -138,8 +103,11 @@ export async function getDocById<T = any>(collectionName: string, docId: string)
       if (docRef.exists) {
         return { id: docRef.id, ...docRef.data() } as T;
       }
-    } catch (err) {
-      console.warn(`Firestore doc get warning for ${collectionName}/${docId}:`, err);
+    } catch (err: any) {
+      console.warn(`Firestore doc get notice for ${collectionName}/${docId}:`, err?.message || err);
+      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore doc get error on Vercel production: ${err.message || "Connection failed"}`);
+      }
     }
   }
 
@@ -160,11 +128,16 @@ export async function setDoc(collectionName: string, docId: string, data: any): 
   if (firestoreDb) {
     try {
       await firestoreDb.collection(collectionName).doc(docId).set(payload, { merge: true });
-    } catch (err) {
-      console.warn(`Firestore write warning for ${collectionName}/${docId}:`, err);
+      return;
+    } catch (err: any) {
+      console.warn(`Firestore write notice for ${collectionName}/${docId}:`, err?.message || err);
+      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore write error on Vercel production: ${err.message || "Connection failed"}`);
+      }
     }
   }
 
+  // Non-production memory store update
   const store = getStoreData();
   if (!store[collectionName]) {
     store[collectionName] = {};
@@ -180,8 +153,12 @@ export async function deleteDoc(collectionName: string, docId: string): Promise<
   if (firestoreDb) {
     try {
       await firestoreDb.collection(collectionName).doc(docId).delete();
-    } catch (err) {
-      console.warn(`Firestore delete warning for ${collectionName}/${docId}:`, err);
+      return true;
+    } catch (err: any) {
+      console.warn(`Firestore delete notice for ${collectionName}/${docId}:`, err?.message || err);
+      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+        throw new Error(`Firestore delete error on Vercel production: ${err.message || "Connection failed"}`);
+      }
     }
   }
 
