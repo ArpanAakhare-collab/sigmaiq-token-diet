@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 import { config } from "@/lib/config";
 
+// Initialize Firebase Admin with safe fallback for managed environments
 if (!admin.apps.length) {
   try {
     const hasValidCert =
@@ -17,12 +18,13 @@ if (!admin.apps.length) {
         }),
       });
     } else {
+      // In Firebase Cloud Functions / GCP, initializeApp() uses managed default credentials automatically
       admin.initializeApp({
-        projectId: config.firebaseAdmin.projectId || "demo-app",
+        projectId: config.firebaseAdmin.projectId || "sigmaiq-a6fd6",
       });
     }
-  } catch (error) {
-    console.warn("Firebase Admin Initialization Warning:", error);
+  } catch (error: any) {
+    console.warn("Firebase Admin Initialization Notice:", error?.message || error);
   }
 }
 
